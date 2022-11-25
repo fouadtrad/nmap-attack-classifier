@@ -1,0 +1,22 @@
+Count
+Dst Host Diff Srv Rate
+Srv Count
+Service
+Protocol Type
+Srv Serror Rate
+Dst Host Same Src Port Rate
+Serror Rate
+Srv Diff Host Rate
+Dst Host Srv Serror Rate
+Duration
+Src Bytes
+Diff Srv Rate
+Dst Host Same Srv Rate
+Same Srv Rate
+Urgent
+Dst Host Count
+Dst Host Srv Diff Host Rate
+Dst Host Srv Count
+Dst Host Serror Rate
+Flag
+Dst Bytes
