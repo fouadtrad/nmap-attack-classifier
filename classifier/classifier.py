@@ -3,7 +3,10 @@
 import pickle
 from pathlib import Path
 import pandas as pd
-import os 
+import os
+import torch as ch
+import numpy as np
+
 dir_path = Path(os.path.realpath(__file__)).parent
 
 class FeaturesSubset:
@@ -55,16 +58,70 @@ class Classifier:
         
         x_df = pd.DataFrame([x, ])
         return self.model.predict(x_df)[0]
+      
+      
+      
+class NN_Classifier:
+    def __init__(self, model_path: Path, features_fp: Path, encoding_path: Path, means_path: Path, vars_path: Path):
+        """Load model from a .pt file and features & encoding dictionaries from pickle files
+        Args:
+            model_pickle_path (Path): Path to model .pt file
+            features_fp (Path): Path to features pickle file
+            encoding_path (Path): Path to encoding dictionaries pickle file
+        """
+        self.model = ch.load(str(model_path.resolve())).to('cpu')
+        self.means = np.load(str(means_path.resolve()))
+        self.stdevs = np.sqrt(np.load(str(vars_path.resolve())))
+        self.encoding_maps = pkl.load(open(str(encoding_path.resolve()), "rb"))
 
+        with open(str(features_fp.resolve()), 'r') as f:
+            self.features = f.read().splitlines()
 
+    def predict(self, x: dict) -> str:
+        """Predict class for given features
+        Args:
+            x (dict): Features that must have keys from features.txt or classifier.features
+        Returns:
+            str: Predicted class
+        """
+        
+        assert all([feature in x.keys() for feature in self.features]), "Missing features"
+        
+        x = {k: v for k, v in x.items() if k in self.features}
+        
+        x_df = pd.DataFrame([x, ])
+
+        # Categorical Encoding
+        x_df['Protocol Type'] = self.encoding_maps[0][x_df['Protocol Type'].item()]
+        x_df['Service'] = self.encoding_maps[1][x_df['Service'].item()]
+        x_df['Flag'] = self.encoding_maps[2][x_df['Flag'].item()]
+
+        # Scaling
+        num_features = x_df.drop(['Protocol Type', 'Service', 'Flag'], axis = 1).columns.to_numpy()
+        x_df[num_features] = (x_df[num_features] - self.means) / self.stdevs
+
+        # Inference
+        x = ch.from_numpy(x_df.to_numpy(copy = True)).type(ch.float)
+        self.model.eval()
+        y = self.model(ch.cat((x, x))).argmax(1)[0]
+
+        return self.encoding_maps[3][y.item()]
+
+      
+      
 # an example of how to use the classifier
 if __name__ == "__main__":
     
     # you set the files paths
     model_path = dir_path / "model.sav"
+    nn_classifier_path = dir_path / "nn_classifier.pt"
     features_path = dir_path / "features.txt"
+    encoding_path = dir_path / "encoding_maps.p"
+    means_path = dir_path / "means.npy"
+    vars_path = dir_path / "vars.npy"
     
     classifier = Classifier(model_path, features_path)
+    nn_classifier = NN_Classifier(nn_classifier_path, features_path, encoding_path, means_path, vars_path)
     
     test_input = {
     "Duration": 0,	
@@ -97,4 +154,5 @@ if __name__ == "__main__":
     "Dst Host Srv Rerror Rate":0,
     }
     
-    print("Test prediction ", classifier.predict(test_input))
+    print("Test Prediction:", classifier.predict(test_input))
+    print("NN Classifier Test Prediction:", nn_classifier.predict(test_input))
