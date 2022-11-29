@@ -1,6 +1,8 @@
 #!/bin/sh
 
-#Attack type, IPvictim, number of times, port number
+# Author: Fouad Trad
+
+#Parameters provided when running the file: Attack type, IPvictim, number of repetitions
 
 attack=$1 #The attack type
 ip=$2 #The victim's IP
@@ -17,19 +19,15 @@ udp="UDP"
 tcp="TCP"
 tcpwindow="TCPWINDOW"
 tcpmaimon="TCPMAIMON"
-ackping="ACKPING"
-synping="SYNPING"
-udpping="UDPPING"
 echoping="ECHOPING"
 timeping="TIMEPING"
 ipping="IPPING"
 portscan="PORTSCAN"
 osdetect="OSDETECT"
-rpcscan="RPCSCAN"
 serviceversionscan="SERVICEVERSIONSCAN"
 
 
-i=0
+i=0 # a counter
 
 while [ $i -le $number ]
 do
@@ -65,18 +63,6 @@ do
 		then
 		echo "tcp"
 		sudo nmap -sT $ip
-	elif [ $attack = $ackping ]
-		then 
-		echo "ack ping"
-		sudo nmap -PA $ip
-	elif [ $attack = $synping ]
-		then 
-		echo "syn ping"
-		sudo nmap -PS $ip
-	elif [ $attack = $udpping ]
-		then 
-		echo "udp ping"
-		sudo nmap -PU $ip
 	elif [ $attack = $echoping ]
 		then 
 		echo "echo ping"
@@ -97,10 +83,6 @@ do
 		then 
 		echo "OS Detection"
 		sudo nmap -O $ip
-	elif [ $attack = $rpcscan ]
-		then 
-		echo "RPC Scan"
-		sudo nmap -sR $ip
 	elif [ $attack = $serviceversionscan ]
 		then 
 		echo "Service version detection"
