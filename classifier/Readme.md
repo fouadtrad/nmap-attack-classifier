@@ -5,7 +5,7 @@ The scripts in this folder are to load the pre-trained models for detection and 
 ## In the directory
 - The `.ipynb` notebooks to train the models. 
     -  The RF-Classifier can also be found [here](https://colab.research.google.com/drive/1La6UB301uMwIz73PL8o6GuTMQiZ4_rxw?usp=sharing)
-    -  The NN-Classifier model weights can be found in this directory ("nn_classifier.pt")
+- The NN-Classifier model weights can be found in this directory `nn_classifier.pt`
 - The script to wrap the models `classifier.py`
 
 ## Model setup instructions
