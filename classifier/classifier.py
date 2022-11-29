@@ -5,6 +5,8 @@ from pathlib import Path
 import pandas as pd
 import os
 import torch as ch
+import torch.nn as nn
+import torch.nn.functional as F
 import numpy as np
 
 dir_path = Path(os.path.realpath(__file__)).parent
@@ -59,7 +61,73 @@ class Classifier:
         x_df = pd.DataFrame([x, ])
         return self.model.predict(x_df)[0]
       
-      
+     
+    
+    
+    
+"""
+NN Model Architecture (required for loading model)
+    - 5 fully connected layers with tunable sizes (set to 128 -> 256 -> 512 -> 256 -> 128 in experiments)
+    - ReLU activation after each FC layer (except for the last)
+    - Optional batch normalization layers (with learnable parameters) applied after each FC layer (except for the last)
+    - Optional dropout applied to each FC layer (except for the last)
+"""
+class FCN(nn.Module):
+    def __init__(self, n_features, n_classes, n_nodes, batch_norm = False, dropout = False):
+        super().__init__()
+        self.input = nn.Linear(n_features, n_nodes['fc1'])
+        self.fc1 = nn.Linear(n_nodes['fc1'], n_nodes['fc2'])
+        self.fc2 = nn.Linear(n_nodes['fc2'], n_nodes['fc3'])
+        self.fc3 = nn.Linear(n_nodes['fc3'], n_nodes['fc4'])
+        self.fc4 = nn.Linear(n_nodes['fc4'], n_nodes['fc5'])
+        self.fc5 = nn.Linear(n_nodes['fc5'], n_classes)
+
+        self.batch_norm = batch_norm
+        self.bn1 = nn.BatchNorm1d(n_nodes['fc2'])
+        self.bn2 = nn.BatchNorm1d(n_nodes['fc3'])
+        self.bn3 = nn.BatchNorm1d(n_nodes['fc4'])
+        self.bn4 = nn.BatchNorm1d(n_nodes['fc5'])
+
+        self.dropout = dropout
+        self.drop = nn.Dropout(0.1)
+
+
+    def forward(self, x):
+        if self.dropout:
+            if self.batch_norm:
+                x = self.input(x)
+                x = F.relu(self.drop(self.bn1(self.fc1(x))))
+                x = F.relu(self.drop(self.bn2(self.fc2(x))))
+                x = F.relu(self.drop(self.bn3(self.fc3(x))))
+                x = F.relu(self.drop(self.bn4(self.fc4(x))))
+                x = self.fc5(x)
+
+            else:
+                x = self.input(x)
+                x = F.relu(self.drop(self.fc1(x)))
+                x = F.relu(self.drop(self.fc2(x)))
+                x = F.relu(self.drop(self.fc3(x)))
+                x = F.relu(self.drop(self.fc4(x)))
+                x = self.fc5(x)
+        
+        else:
+            if self.batch_norm:
+                x = self.input(x)
+                x = F.relu(self.bn1(self.fc1(x)))
+                x = F.relu(self.bn2(self.fc2(x)))
+                x = F.relu(self.bn3(self.fc3(x)))
+                x = F.relu(self.bn4(self.fc4(x)))
+                x = self.fc5(x)
+
+            else:
+                x = self.input(x)
+                x = F.relu(self.fc1(x))
+                x = F.relu(self.fc2(x))
+                x = F.relu(self.fc3(x))
+                x = F.relu(self.fc4(x))
+                x = self.fc5(x)
+
+        return x    
       
 class NN_Classifier:
     def __init__(self, model_path: Path, features_fp: Path, encoding_path: Path, means_path: Path, vars_path: Path):
