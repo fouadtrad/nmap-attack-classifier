@@ -8,7 +8,9 @@ A full list on the name of attacks that can be handled exist inside the file.
 
 Example Usage to perform a TCP SYN scan 2 times on a machine with IP 192.168.1.5:
 
-```sh performAttack.sh "TCPSYN" 192.168.1.5 2```
+```
+sh performAttack.sh "TCPSYN" 192.168.1.5 2
+```
 
 ## Machine B:
 
@@ -20,7 +22,9 @@ To make things easier, once we have the pcap files, we run the script **get_csv_
 Just make sure the pcap files are within your current directory.
 Example call:
 
-```sh get_csv_for_all_attcks.sh```
+```
+sh get_csv_for_all_attcks.sh
+```
 
 ### Data Labeling
 After the previous step, we would have separate csv files for each possible attack. Here we run the python script **data_labeling.py** that aggregates all csv files into one data frame and assigns the corresponding label according to the name of the csv file.
