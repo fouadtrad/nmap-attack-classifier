@@ -30,5 +30,8 @@ sh get_csv_for_all_attcks.sh
 After the previous step, we would have separate csv files for each possible attack. Here we run the python script **data_labeling.py** that aggregates all csv files into one data frame and assigns the corresponding label according to the name of the csv file.
 After that, we can save our dataframe.
 
+### Author:
+Fouad Trad
+
 ## References:
 [1] https://github.com/AI-IDS/kdd99_feature_extractor
