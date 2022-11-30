@@ -14,8 +14,8 @@ try:
 except:
     old_len = 0
     new_len = 0
-model_path = dir_path / "model.sav"
-features_path = dir_path / "features.txt"
+model_path = dir_path / "classifier/model.sav"
+features_path = dir_path / "classifier/features.txt"
 classifier = Classifier(model_path, features_path)
 
 columns = ['Duration',	'Protocol Type',	'Service',	'Flag',	'Src Bytes',	'Dst Bytes',	'Land',	'Wrong Fragment',	'Urgent',	'Count',	'Srv Count',	'Serror Rate',	'Srv Serror Rate',	'Rerror Rate',	'Srv Rerror Rate', 	'Same Srv Rate', 	'Diff Srv Rate',	'Srv Diff Host Rate', 	'Dst Host Count',	'Dst Host Srv Count',	'Dst Host Same Srv Rate',	'Dst Host Diff Srv Rate',	'Dst Host Same Src Port Rate',	'Dst Host Srv Diff Host Rate',	'Dst Host Serror Rate',	'Dst Host Srv Serror Rate',	'Dst Host Rerror Rate',	'Dst Host Srv Rerror Rate']
