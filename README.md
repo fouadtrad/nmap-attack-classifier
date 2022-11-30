@@ -10,3 +10,12 @@ In this project, we implement an NMAP-attack live detection system, powered by a
 ## Running the tool
 1. Navigate to the directory containing the tool (default is `~/kdd99_feature_extraction`).
 2. Execute `bash run-detect.sh`
+
+## Training the models
+Refer to `classifier/README.md`
+
+## Authors
+- Fouad Trad
+- Saiid El Hajj Chehade
+- Adam Hazimeh
+- Abdel Rahman 
