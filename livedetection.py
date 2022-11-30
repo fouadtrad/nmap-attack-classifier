@@ -3,7 +3,7 @@ import pandas as pd
 import os 
 import pyinotify
 import warnings
-from classifier import *
+from classifier.classifier import *
 
 warnings.filterwarnings("ignore")
 dir_path = Path(os.path.realpath(__file__)).parent
